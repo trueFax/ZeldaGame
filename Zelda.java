@@ -19,391 +19,711 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
-import javax.sound.sampled.AudioInputStream; 
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem ;
 import javax.sound.sampled.Clip ;
 
-// go until pg 119 playerMover 
+// go until pg 119 playerMover
 public class Zelda {
-    public Zelda() {
-        setup();
-    }
-    public static void main(String[] args){
-        setup();
-        appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        appFrame.setSize(WINWIDTH+1, WINHEIGHT+85);
-    
-        JPanel myPanel = new JPanel();
-        
-        JButton quitButton = new JButton("Select");
-        quitButton.addActionListener(new QuitGame());
-        myPanel.add(quitButton);
-    
-        JButton newGameButton = new JButton("Start");
-        newGameButton.addActionListener(new StartGame());
-    
-        JButton quitButton = new JButton ("Quit_Game");
-        quitButton.addActionListener(new QuitGame());
-        myPanel.add(quitButton);
-    
-        bindKey(myPanel, "UP");
-        bindKey(myPanel,"DOWN");
-        bindKey(myPanel, "LEFT");
-        bindKey(myPanel, "RIGHT");
-        bindKey(myPanel, "F");
-        appFrame.getContentPane().add(myPanel, "South");
-        appFrame.setVisible(true);
-    }
     private static Boolean endgame ;
-    private static Vector< Vector< BufferedImage > > backgroundKI ;
-    private static Vector< Vector< BufferedImage > > backgroundTC ;
-    private static Vector< Vector< Vector< ImageObject > > > wallsKI ;
-    private static Vector< Vector< Vector< ImageObject > > > wallsTC ;
-    private static int xdimKI ;
-    private static int ydimKI ;
-    private static int xdimTC ;
-    private static int ydimTC ;
-    private static BufferedImage player ;
-    private static Vector< BufferedImage > link ;
-    private static BufferedImage leftHeartOutline;
-    private static BufferedImage rightHeartOutline;
-    private static BufferedImage leftHeart;
-    private static BufferedImage rightHeart ;
-    private static Vector< BufferedImage > bluepigEnemy ;
-    private static Vector< ImageObject > bluepigEnemies ;
-    private static Vector< ImageObject > bubblebossEnemies ;
-    private static ImageObject doorKItoTC ;
-    private static ImageObject doorTCtoKI ;
-    private static Boolean upPressed ;
-    private static Boolean downPressed ;
-    private static Boolean leftPressed ;
-    private static Boolean rightPressed ;
-    private static Boolean aPressed ;
-    private static Boolean xPressed ;
-    private static double lastPressed ;
-    private static ImageObject p1 ;
-    private static double p1width ;
-    private static double p1height ;
-    private static double p1originalX ;
-    private static double p1originalY ;
-    private static double p1velocity ;
-    private static int level ;
-    private static Long audiolifetime ;
-    private static Long lastAudioStart ;
-    private static Clip clip ;
-    private static Long dropLifeLifetime ;
-    private static Long lastDropLife ;
-    private static int XOFFSET;
-    private static int YOFFSET;
-    private static int WINWIDTH;
-    private static int WINHEIGHT;
-    private static double pi ;
-    private static double quarterPi ;
-    private static double halfPi;
-    private static double threequartersPi ;
-    private static double fivequartersPi;
-    private static double threehalvesPi;
-    private static double sevenquartersPi;
-    private static double twoPi;
-    private static JFrame appFrame ;
-    private static String backgroundState ;
-    private static Boolean availableToDropLife;
-    private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
+	private static Vector< Vector< BufferedImage > > backgroundKI ;
+	private static Vector< Vector< BufferedImage > > backgroundTC ;
+	private static Vector< Vector< Vector< ImageObject > > > wallsKI ;
+	private static Vector< Vector< Vector< ImageObject > > > wallsTC ;
+	private static int xdimKI ;
+	private static int ydimKI ;
+	private static int xdimTC ;
+	private static int ydimTC ;
+	private static BufferedImage player ;
+	private static Vector< BufferedImage > link ;
+	private static BufferedImage leftHeartOutline;
+	private static BufferedImage rightHeartOutline;
+	private static BufferedImage leftHeart;
+	private static BufferedImage rightHeart ;
+	private static Vector< BufferedImage > bluepigEnemy ;
+	private static Vector<ImageObject> bluepigEnemies ;
+	private static Vector<ImageObject> bubblebossEnemies ;
+	private static ImageObject doorKItoTC ;
+	private static ImageObject doorTCtoKI ;
+	private static Boolean upPressed ;
+	private static Boolean downPressed ;
+	private static Boolean leftPressed ;
+	private static Boolean rightPressed ;
+	private static Boolean aPressed ;
+	private static Boolean xPressed ;
+	private static double lastPressed ;
+	private static ImageObject p1 ;
+	private static double p1width ;
+	private static double p1height ;
+	private static double p1originalX ;
+	private static double p1originalY ;
+	private static double p1velocity ;
+	private static int level ;
+	private static Long audiolifetime ;
+	private static Long lastAudioStart ;
+	private static Clip clip ;
+	private static Long dropLifeLifetime ;
+	private static Long lastDropLife ;
+	private static int XOFFSET;
+	private static int YOFFSET;
+	private static int WINWIDTH;
+	private static int WINHEIGHT;
+	private static double pi ;
+	private static double quarterPi ;
+	private static double halfPi;
+	private static double threequartersPi ;
+	private static double fivequartersPi;
+	private static double threehalvesPi;
+	private static double sevenquartersPi;
+	private static double twoPi;
+	private static JFrame appFrame ;
+	private static String backgroundState ;
+	private static Boolean availableToDropLife;
+	private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
+    
+	public Zelda() {
+		setup();
+	}
+	public static void main(String[] args){
+		setup();
+		appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		appFrame.setSize(WINWIDTH+1, WINHEIGHT+85);
+
+		JPanel myPanel = new JPanel();
+
+		JButton quitButton = new JButton("Select");
+		quitButton.addActionListener(new QuitGame());
+		myPanel.add(quitButton);
+
+		JButton newGameButton = new JButton("Start");
+		newGameButton.addActionListener(new StartGame());
+
+		JButton quitButton = new JButton ("Quit_Game");
+		quitButton.addActionListener(new QuitGame());
+		myPanel.add(quitButton);
+
+		bindKey(myPanel, "UP");
+		bindKey(myPanel,"DOWN");
+		bindKey(myPanel, "LEFT");
+		bindKey(myPanel, "RIGHT");
+		bindKey(myPanel, "F");
+		appFrame.getContentPane().add(myPanel, "South");
+		appFrame.setVisible(true);
+	}
+	
 
 
-    public static void setup(){
-        appFrame = new JFrame("The Legend of Zelda: Link's Awakening");
-        XOFFSET = 0;
-        YOFFSET = 40;
-        WINWIDTH = 338;
-        WINHEIGHT = 271;
-        pi = Math.PI;
-        quarterPi = pi /4;
-        halfPi = pi/2;
-        threeQuartersPi = pi * 0.75;
-        fivequartersPi = 1.25 * pi;
-        threehalvesPi = 1.5 * pi;
-        sevenquartersPi = 1.75 * pi;
-        twoPi = 2.0 * pi;
-        endgame = false;
-        p1width = 20; //18.5
-        p1height = 20; //25
-        p1originalX = (double)XOFFSET + ((double)WINWIDTH / 2.0) - (p1width / 2.0);
-        p1originalY = (double)YOFFSET + ((double)WINHEIGHT / 2.0) - (p1height /2.0);
-        level = 3;
-        audiolifetime = new Long(78000);
-        dropLifetime = new Long(1000);
-        try{
-            xdimKI = 16;
-            ydimKI = 16;
-            backgroundKI = new Vector<Vector<BufferedImage>>();
+	public static void setup(){
+		appFrame = new JFrame("The Legend of Zelda: Link's Awakening");
+		XOFFSET = 0;
+		YOFFSET = 40;
+		WINWIDTH = 338;
+		WINHEIGHT = 271;
+		pi = Math.PI;
+		quarterPi = pi /4;
+		halfPi = pi/2;
+		threeQuartersPi = pi * 0.75;
+		fivequartersPi = 1.25 * pi;
+		threehalvesPi = 1.5 * pi;
+		sevenquartersPi = 1.75 * pi;
+		twoPi = 2.0 * pi;
+		endgame = false;
+		p1width = 20; //18.5
+		p1height = 20; //25
+		p1originalX = (double)XOFFSET + ((double)WINWIDTH / 2.0) - (p1width / 2.0);
+		p1originalY = (double)YOFFSET + ((double)WINHEIGHT / 2.0) - (p1height /2.0);
+		level = 3;
+		audiolifetime = new Long(78000);
+		dropLifetime = new Long(1000);
+		try{
+			xdimKI = 16;
+			ydimKI = 16;
+			backgroundKI = new Vector<Vector<BufferedImage>>();
 
-            for(int i =0; i < ydimKI; i++) {
-                Vector<BufferedImage> temp = new Vector<BufferedImage> ();
-                for(int j = 0; j < xdimKI; j++){
-                    BufferedImage tempImg = ImageIO.read(new File("blank.png"));
-                    temp.addElement(tempImg);
-                }
-                backgroundKI.addElement(tempImg);
-            }
-            for(int i = 0; i < backgroundKI.size(); i++){
-                for (int j = 0; j < backgroundKI.elementAt(i).size(); j++){
-                    if((j == 5 && i == 10) || (j == 5 && i == 11) || (j == 6 && i == 10) || (j == 6 &&i == 11) 
-                        || (j == 7 && i == 10) || (j == 7 && i == 11) || (j == 8 && i ==9) || (j ==8 && i == 10)){ // TODO: Swap j and i 
-                        String filename = "KI";
-                        if (j < 10) {
-                            filename = filename + "0";
-                        }
-                        filename = filename + j;
-                        if (i < 10) {
-                            filename = filename + "0";
-                        }
-                        filename = filename + i + ".png";
-                        //System.out.println(filename);
-                        backgroundKI.elementAt(i).set(j, ImageIO.read(new File (filename)));
-                    }
-                }
-            }
-            //setting up the Koholint Island Walls 
-            wallsKI = new Vector<Vector<Vector<ImageObject>>>();
-            for(int i = 0; i < ydimKI; i++){
-                Vector<Vector<ImageObject>> temp = new Vector<Vector<ImageObject>>();
-                for( int j = 0; j < xdimKI; j++){
-                    Vector<ImageObject> tempWalls = new Vector <ImageObject>();
-                    temp.addElement(tempWalls);
-                }
-                wallsKI.add(temp);
-            }
-            for(int i = 0; i < wallsKI.size(); i++){
-                for(int j = 0; j < wallsKI.elementAt(i).size(); j++) {
-                    if (i ==5 && j ++ 10){
-                        wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 270, 35, 68, 70, 0.0));
-                        wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 100, 100, 200, 35, 0.0));
-                        wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 100, 135, 35, 35, 0.0));
-                        wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 0, 165, 35, 135, 0.0));
-                        wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 100, 200, 35, 70, 0.0));
-                        wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 135, 270, 200, 35, 0.0));
-                    }
-                    if(i == 8 && j == 9){ //PAGE 112
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 0 , 35 , 135, 35 , 0.0 ) ) ;
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 100, 70 , 35 , 140, 0.0 ) ) ;
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 35 , 135, 35 , 100, 0.0 ) ) ;
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 0 , 170, 35 , 70 , 0.0 ) ) ;
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 0 , 235, 35 , 70 , 0.0 ) ) ;
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 0 , 270, 135, 35 , 0.0 ) ) ;
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 170, 270, 135, 35 , 0.0 ) ) ;
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 300, 35 , 35 , 270, 0.0 ) ) ;
-                        wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 235, 35 , 70 , 35 , 0.0 ) ) ;
+			for(int i =0; i < ydimKI; i++) {
+				Vector<BufferedImage> temp = new Vector<BufferedImage> ();
+				for(int j = 0; j < xdimKI; j++){
+					BufferedImage tempImg = ImageIO.read(new File("blank.png"));
+					temp.addElement(tempImg);
+				}
+				backgroundKI.addElement(tempImg);
+			}
+			for(int i = 0; i < backgroundKI.size(); i++){
+				for (int j = 0; j < backgroundKI.elementAt(i).size(); j++){
+					if((j == 5 && i == 10) || (j == 5 && i == 11) || (j == 6 && i == 10) || (j == 6 &&i == 11)
+							|| (j == 7 && i == 10) || (j == 7 && i == 11) || (j == 8 && i ==9) || (j ==8 && i == 10)){ // TODO: Swap j and i
+						String filename = "KI";
+						if (j < 10) {
+							filename = filename + "0";
+						}
+						filename = filename + j;
+						if (i < 10) {
+							filename = filename + "0";
+						}
+						filename = filename + i + ".png";
+						//System.out.println(filename);
+						backgroundKI.elementAt(i).set(j, ImageIO.read(new File (filename)));
+					}
+				}
+			}
+			//setting up the Koholint Island Walls
+			wallsKI = new Vector<Vector<Vector<ImageObject>>>();
+			for(int i = 0; i < ydimKI; i++){
+				Vector<Vector<ImageObject>> temp = new Vector<Vector<ImageObject>>();
+				for( int j = 0; j < xdimKI; j++){
+					Vector<ImageObject> tempWalls = new Vector <ImageObject>();
+					temp.addElement(tempWalls);
+				}
+				wallsKI.add(temp);
+			}
+			for(int i = 0; i < wallsKI.size(); i++){
+				for(int j = 0; j < wallsKI.elementAt(i).size(); j++) {
+					if (i ==5 && j == 10){
+						wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 270, 35, 68, 70, 0.0));
+						wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 100, 100, 200, 35, 0.0));
+						wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 100, 135, 35, 35, 0.0));
+						wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 0, 165, 35, 135, 0.0));
+						wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 100, 200, 35, 70, 0.0));
+						wallsKI.elementAt(i).elementAt(j).addElement(new ImageObject( 135, 270, 200, 35, 0.0));
+					}
+					if(i == 8 && j == 9){ //PAGE 112
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 0 , 35 , 135, 35 , 0.0 ) ) ;
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 100, 70 , 35 , 140, 0.0 ) ) ;
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 35 , 135, 35 , 100, 0.0 ) ) ;
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 0 , 170, 35 , 70 , 0.0 ) ) ;
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 0 , 235, 35 , 70 , 0.0 ) ) ;
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 0 , 270, 135, 35 , 0.0 ) ) ;
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 170, 270, 135, 35 , 0.0 ) ) ;
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 300, 35 , 35 , 270, 0.0 ) ) ;
+						wallsKI. elementAt ( i ).elementAt ( j ).addElement ( new ImageObject ( 235, 35 , 70 , 35 , 0.0 ) ) ;
 
-                    }
-                }
-            }
-            // setting up the Tail Cave Images
-            xdimTC = 9; //7; //TODO: need to be able to just use 7 and 6, not 9 and 8.
-            ydimTC = 8; //6;
-            backgroundTC = new Vector <Vector <BufferedImage>>();
-            for(int i = 0; i < ydimTC; i++) {
-                Vector<BufferedImage> temp = new Vector <BufferedImage>();
-                for(int j = 0; j < xdimTC; j++) {
-                    BufferedImage tempImg = ImageIO.read(new File("blank.png"));
-                    temp.addElement(tempImg);
-                } 
-                backgroundTC.addElement(temp);
-            }
+					}
+				}
+			}
+			// setting up the Tail Cave Images
+			xdimTC = 9; //7; //TODO: need to be able to just use 7 and 6, not 9 and 8.
+			ydimTC = 8; //6;
+			backgroundTC = new Vector <Vector <BufferedImage>>();
+			for(int i = 0; i < ydimTC; i++) {
+				Vector<BufferedImage> temp = new Vector <BufferedImage>();
+				for(int j = 0; j < xdimTC; j++) {
+					BufferedImage tempImg = ImageIO.read(new File("blank.png"));
+					temp.addElement(tempImg);
+				}
+				backgroundTC.addElement(temp);
+			}
 
-        for(int i = 0; i < backgroundTC.size(); i++) {
-            for(int j = 0; j < backgroundTC.elementAt(i).size(); j++){
-                if((j == 0 && i == 2) || (j == 0 && i == 3) || (j == 0 && i == 4) || (j == 1 && i == 1) || ( j == 1 && i == 3 ) || ( j == 1 && i == 5 ) || ( j == 2 &&
-                i == 1 ) || ( j == 2 && i == 2 ) ||
-                ( j == 2 && i == 3 ) || ( j == 2 && i == 4 ) || ( j == 2 &&
-                i == 5 ) || ( j == 2 && i == 6 ) ||
-                ( j == 3 && i == 1 ) || ( j == 3 && i == 2 ) || ( j == 3 &&
-                i == 3 ) || ( j == 3 && i == 4 ) ||
-                ( j == 3 && i == 5 ) || ( j == 4 && i == 2 ) || ( j == 4 &&
-                i == 3 ) || ( j == 4 && i == 4 ) ||
-                ( j == 5 && i == 2 ) || ( j == 5 && i == 3 ) || ( j == 6 &&
-                i == 0 ) || ( j == 6 && i == 1 ) ||
-                ( j == 6 && i == 2 ) || ( j == 6 && i == 3 )){
-                    String filename = "TC";
-                    if(j < 10){
-                        filename = filename + "0";
-                    }
-                    filename = filename + j;
-                    if (i < 10) {
-                        filename = filename + 1 + ".png";
-                        //System.out.println(filename);
-                        backgroundTC.elementAt(i).set(j, ImageIO.read(new File(filename)));
-                    }
-                }
-            }
-            //setting up the Tail Cave walls
-            wallsTC = new Vector<Vector<Vector<ImageObject>>>();
-            for(int i = 0; i < ydimTC; i++){
-                Vector<Vector<ImageObject>> temp = new Vector<Vector<ImageObject>>();
-                for(int j = 0; j < xdimTC; j++){
-                    Vector<ImageObject> tempWalls = new Vector<ImageObject>();
-                    temp.addElement(tempWalls);
-                }
-                wallsTC.add(temp);
-            }
-            player = ImageIO.read(new file("link00.png"));
-             //links images
-            link = new Vector<BufferedImage>();
-            for(int i = 0; i < 72; i++){
-                if(i < 10){
-                    String filename = "link0" + i + ".png";
-                    link.addElement(ImageIO.read(new File(filename)));
+			for(int i = 0; i < backgroundTC.size(); i++) {
+				for(int j = 0; j < backgroundTC.elementAt(i).size(); j++){
+					if((j == 0 && i == 2) || (j == 0 && i == 3) || (j == 0 && i == 4) || (j == 1 && i == 1) || ( j == 1 && i == 3 ) || ( j == 1 && i == 5 ) || ( j == 2 &&
+							i == 1 ) || ( j == 2 && i == 2 ) ||
+							( j == 2 && i == 3 ) || ( j == 2 && i == 4 ) || ( j == 2 &&
+							i == 5 ) || ( j == 2 && i == 6 ) ||
+							( j == 3 && i == 1 ) || ( j == 3 && i == 2 ) || ( j == 3 &&
+							i == 3 ) || ( j == 3 && i == 4 ) ||
+							( j == 3 && i == 5 ) || ( j == 4 && i == 2 ) || ( j == 4 &&
+							i == 3 ) || ( j == 4 && i == 4 ) ||
+							( j == 5 && i == 2 ) || ( j == 5 && i == 3 ) || ( j == 6 &&
+							i == 0 ) || ( j == 6 && i == 1 ) ||
+							( j == 6 && i == 2 ) || ( j == 6 && i == 3 )){
+						String filename = "TC";
+						if(j < 10){
+							filename = filename + "0";
+						}
+						filename = filename + j;
+						if (i < 10) {
+							filename = filename + 1 + ".png";
+							//System.out.println(filename);
+							backgroundTC.elementAt(i).set(j, ImageIO.read(new File(filename)));
+						}
+					}
+				}
+				//setting up the Tail Cave walls
+				wallsTC = new Vector<Vector<Vector<ImageObject>>>();
+				for(int i = 0; i < ydimTC; i++){
+					Vector<Vector<ImageObject>> temp = new Vector<Vector<ImageObject>>();
+					for(int j = 0; j < xdimTC; j++){
+						Vector<ImageObject> tempWalls = new Vector<ImageObject>();
+						temp.addElement(tempWalls);
+					}
+					wallsTC.add(temp);
+				}
+				player = ImageIO.read(new File("link00.png"));
+				//links images
+				link = new Vector<BufferedImage>();
+				for(int i = 0; i < 72; i++){
+					if(i < 10){
+						String filename = "link0" + i + ".png";
+						link.addElement(ImageIO.read(new File(filename)));
 
-                } else {
-                    String filename = "link" + i + ".png";
-                    link.addElement(ImageIO.read(new File(filename)));
-                }
-            }
-            //bluepig enemy images 
-            bluepigEnemies = new Vector <ImageObject>();
-            bluepigEnemy = new Vector <BufferImage>();
-            bluepigEnemy.addElement(ImageIO.read(new File("BPB1.png")));
-            bluepigEnemy.addElement(ImageIO.read(new File("BPB2.png")));
-            bluepigEnemy.addElement(ImageIO.read(new File("BPF1.png")));
-            bluepigEnemy.addElement(ImageIO.read(new File("BPF2.png")));
-            bluepigEnemy.addElement(ImageIO.read(new File("BPL1.png")));
-            bluepigEnemy.addElement(ImageIO.read(new File("BPL2.png")));
-            bluepigEnemy.addElement(ImageIO.read(new File("BPR1.png")));
-            bluepigEnemy.addElement(ImageIO.read(new File("BPR2.png")));
+					} else {
+						String filename = "link" + i + ".png";
+						link.addElement(ImageIO.read(new File(filename)));
+					}
+				}
+				//bluepig enemy images
+				bluepigEnemies = new Vector <ImageObject>();
+				bluepigEnemy = new Vector <BufferImage>();
+				bluepigEnemy.addElement(ImageIO.read(new File("BPB1.png")));
+				bluepigEnemy.addElement(ImageIO.read(new File("BPB2.png")));
+				bluepigEnemy.addElement(ImageIO.read(new File("BPF1.png")));
+				bluepigEnemy.addElement(ImageIO.read(new File("BPF2.png")));
+				bluepigEnemy.addElement(ImageIO.read(new File("BPL1.png")));
+				bluepigEnemy.addElement(ImageIO.read(new File("BPL2.png")));
+				bluepigEnemy.addElement(ImageIO.read(new File("BPR1.png")));
+				bluepigEnemy.addElement(ImageIO.read(new File("BPR2.png")));
 
-            //BubbleBoss Enemies
-            bubblebossEnemies = new Vector<ImageObject>();
-            //Health Images
-            leftHeartOutline = ImageIO.read(new File("heartOutlineLeft.png"));
-            rightHeartOutline = ImageIO.read(new File("heartOutlineRight.png"));
-            rightHeart = ImageIO.read(new File("heartRight.png"));
-            leftHeart = ImageIO.read(new File("heartLeft.png"));
-            
-        } 
-        catch (IOException ioe) {} // left off on page 115 
+				//BubbleBoss Enemies
+				bubblebossEnemies = new Vector<ImageObject>();
+				//Health Images
+				leftHeartOutline = ImageIO.read(new File("heartOutlineLeft.png"));
+				rightHeartOutline = ImageIO.read(new File("heartOutlineRight.png"));
+				rightHeart = ImageIO.read(new File("heartRight.png"));
+				leftHeart = ImageIO.read(new File("heartLeft.png"));
+
+			}
+        } catch (IOException ioe) {
+
+            } // left off on page 115
     }
-    private stati class Animate implements Runnable{
-        public void run(){
-            while(endgame == false){
-                backgroundDraw();
-                enemiesDraw();
-                playerDraw();
-                healthDraw();
+		private static class Animate implements Runnable{
+			public void run(){
+				while(endgame == false){
+					backgroundDraw();
+					enemiesDraw();
+					playerDraw();
+					healthDraw();
 
-                try{
-                    Thread.sleep(32);
-                }
-                catch(InterruptedException e) {
+					try{
+						Thread.sleep(32);
+					}
+					catch(InterruptedException e) {
 
-                }
-            }
-        }
-    }
-    private static class AudioLooper implements Runnable{
-        public void run(){
-            while(endgame == false) {
-                Long curTime = new Long(System.currentTimeMillis());
-                if(curTime - lastAudioStart > audiolifetime) {
-                    playAudio(backgroundState)
-                }
-            }
-        }
-    }
-    private static void playAudio(String backgroundState){
-        try{
-            clip.stop();
-        }
-        catch(Exception e){
-            //NOP
-        }
-        try{
-            if(backgroundState.substring(0, 2).equals("KI")){
-                AudioInputStream ais = AudioSystem.getAudioInputStream(new File("KI.wav").getAbsoluteFile());
-                clip = AudioSystem.getClip();
-                clip.open(ais);
-                clip.start();
-                lastAudioStart = System.currentTimeMillis();
+					}
+				}
+			}
+		}
+		private static class AudioLooper implements Runnable{
+			public void run(){
+				while(endgame == false) {
+					Long curTime = new Long(System.currentTimeMillis());
+					if(curTime - lastAudioStart > audiolifetime) {
+						playAudio(backgroundState);
+					}
+				}
+			}
+		}
+		private static void playAudio(String backgroundState){
+			try{
+				clip.stop();
+			}
+			catch(Exception e){
+				//NOP
+			}
+			try{
+				if(backgroundState.startsWith("KI")){
+					AudioInputStream ais = AudioSystem.getAudioInputStream(new File("KI.wav").getAbsoluteFile());
+					clip = AudioSystem.getClip();
+					clip.open(ais);
+					clip.start();
+					lastAudioStart = System.currentTimeMillis();
 
-            }
-            else if(backgroundState.substring(0,2).equals("TC")) {
-                AudioInputStream ais = AudioSystem.getAudioInputStream(new File("TC.wav").getAbsoluteFile());
-                clip = AudioSystem.getClip();
-                clip.open(ais);
-                clip.start();
-                lastAudioStart = System.currentTimeMillis();
-                audiolifetime = new Long(191000);
+				}
+				else if(backgroundState.startsWith("TC")) {
+					AudioInputStream ais = AudioSystem.getAudioInputStream(new File("TC.wav").getAbsoluteFile());
+					clip = AudioSystem.getClip();
+					clip.open(ais);
+					clip.start();
+					lastAudioStart = System.currentTimeMillis();
+					audiolifetime = new Long(191000);
 
-            }
-        }
-        catch(Exception e) {
-            //NOP
-        }
-    }
-    private static String bgWrap(String input, int wrap){
-        String ret = input;
-        if (wrap == 0){
-            //NOP
-        }
-        else if (wrap == 1) {
-            int xcoord = Integer.parseInt(Input.substring(2,4));
-            int ycoord = Integer.parseInt(input.substring(4,6));
+				}
+			}
+			catch(Exception e) {
+				//NOP
+			}
+		}
+		private static String bgWrap(String input, int wrap){
+			String ret = input;
+			if (wrap == 0){
+				//NOP
+			}
+			else if (wrap == 1) {
+				int xcoord = Integer.parseInt(Input.substring(2,4));
+				int ycoord = Integer.parseInt(input.substring(4,6));
 
-            xcoord = xcoord + 1;
-            if(xcoord < 10){
-                ret = input.substring(0, 2) + "0" + xcoord;
+				xcoord = xcoord + 1;
+				if(xcoord < 10){
+					ret = input.substring(0, 2) + "0" + xcoord;
 
-            }
-            else {
-                ret = input.substring(0, 2) + xcoord;
-            }
-            if(ycoord < 10){
-                ret = ret + "0" + ycoord;
-            }
-            else {
-                ret = ret + ycoord;
-            }
-        }
-        else if(wrap == 2) { //left
-            int xcoord = Integer.parseInt(input.substring(2, 4));
-            int ycoord = Integer.parseInt(input.substring(4,6));
+				}
+				else {
+					ret = input.substring(0, 2) + xcoord;
+				}
+				if(ycoord < 10){
+					ret = ret + "0" + ycoord;
+				}
+				else {
+					ret = ret + ycoord;
+				}
+			}
+			else if(wrap == 2) { //left
+				int xcoord = Integer.parseInt(input.substring(2, 4));
+				int ycoord = Integer.parseInt(input.substring(4,6));
 
-            xcoord = xcoord - 1;
+				xcoord = xcoord - 1;
 
-            if(xcoord < 10){
-                ret = input.substring(0,2) + "0" + xcoord;
-            }
-            else {
-                ret = input.substring(0, 2) + xcoord;
-            }
-            if( ycoord < 10) {
-                ret = ret + "0" + ycoord;
-            } else{
-                ret = ret + ycoord;
-            }
-        }
-        else if(wrap == 4) //up
-        {
-            int xcoord = Integer.parseInt(input.substring(2, 4));
-            int ycoord = Integer.parseInt(input.substring(4, 6));
+				if(xcoord < 10){
+					ret = input.substring(0,2) + "0" + xcoord;
+				}
+				else {
+					ret = input.substring(0, 2) + xcoord;
+				}
+				if( ycoord < 10) {
+					ret = ret + "0" + ycoord;
+				} else{
+					ret = ret + ycoord;
+				}
+			}
+			else if(wrap == 4) //up
+			{
+				int xcoord = Integer.parseInt(input.substring(2, 4));
+				int ycoord = Integer.parseInt(input.substring(4, 6));
 
-            ycoord = ycoord- 1;
+				ycoord = ycoord- 1;
 
-            if(xcoord < 10){
-                ret = input.substring(0, 2) + "0" + xcoord;
-            }
-            else {
-                ret = input.substring(0, 2) + xcoord;
-            }
-            if(ycoord < 10) {
-                ret = ret + "0" + ycoord;
-            } 
-            else {
-                ret = ret + ycoord;
-            }
-        }
-        return ret;
-    }
+				if(xcoord < 10){
+					ret = input.substring(0, 2) + "0" + xcoord;
+				}
+				else {
+					ret = input.substring(0, 2) + xcoord;
+				}
+				if(ycoord < 10) {
+					ret = ret + "0" + ycoord;
+				}
+				else {
+					ret = ret + ycoord;
+				}
+			}
+			return ret;
+		}
+
 
 // start on psc animate
+		private static void healthDraw() {
+			Graphics g = appFrame.getGraphics();
+			Graphics g2D = g;
 
-} 
+			int leftscale = 10;
+			int leftoffset = 10;
+			int rightoffset = 9;
+			int interioroffset = 2;
+			int halfinterioroffset  = 1;
+
+			for (int i = 0; i < p1.getMaxLife(); i++) {
+				if (i % 2 == 0) {
+					g2D.drawImage(rotateImageObject(p1).filter(leftHeartOutline, null), leftscale * i + leftoffset + XOFFSET, YOFFSET, null);
+				}
+				else {
+					g2D.drawImage(rotateObject(p1).filter(rightHeartOutline, null), leftscale * i + rightoffet + XOFFSET, YOFFSET, null);
+				}
+			}
+
+			for (int i = 0; i < p1.getMaxLife(); i++) {
+				if (i % 2 == 0) {
+					g2D . drawImage ( rotateImageObject(p1).filter(leftHeart, null), leftscale * i + leftoffset + interioroffset + XOFFSET, interioroffset + YOFFSET, null ) ;
+				}
+				else {
+					g2D.drawImage(rotateImageObject(p1).filter(rightHeart,null), leftscale * i + leftoffset - halfinterioroffset +
+							XOFFSET, interioroffset + YOFFSET, null ) ;
+				}
+			}
+		}
+
+		public static void enemiesDraw() {
+
+			Graphics g = appFrame.getGraphics();
+			Graphics g2D = g;
+
+			for (int i = 0; i < bluepigEnemies.size(); i++) {
+				if (Math.abs(bluepigEnemies.elementAt(i).getInternalAngle() - 0.0) < 1.0 ) {
+					if (bluepigEnemies.elementAt(i).getCurrentFrame() < bluepigEnemies.elementAt(i).getMaxFrames() / 2 ) {
+						g2D.drawImage(rotateImageObject(bluepigEnemies.elementAt(i)).filter(bluepigEnemy.elementAt(6), null ), (int)(bluepigEnemies.elementAt(i).getX() + 0.5 ), (int)(bluepigEnemies.elementAt(i).getY() + 0.5) , null);
+					}
+					else {
+						g2D.drawImage(rotateImageObject(bluepigEnemies.elementAt(i)).filter(bluepigEnemy.elementAt(7), null), (int)(bluepigEnemies.elementAt(i).get() + 0.5), (int)(bluepigEnemies.elementAt(i).getY() + 0.5), null);
+					}
+					bluepigEnemies.elementAt(i).updateCurrentFrame();
+				}
+				if (Math.abs(bluepigEnemies.elementAt(i).getInternalAngle() - pi) < 1.0) {
+					if (bluepigEnemies.elementAt(i).getCurrentFrame() < bluepigEnemies.elementAt(i).getMaxFrames() / 2) {
+						g2D.drawImage(rotateImageObject(bluepigEnemies.elementAt(i)).filter(bluepigEnemy.elementAt(4), null), (int)(bluepigEnemies.elementAt(i).getX() + 0.5), (int)(bluepigEnemies.elementAt(i).getY() + 0.5 ), null );
+					}
+					else {
+						g2D.drawImage(rotateImageObject(bluepigEnemies.elementAt(i)).filter(bluepigEnemy.elementAt(5), null), (int)(bluepigEnemies.elementAt(i).getX() + 0.5) , (int)(bluepigEnemies.elementAt(i).getY() + 0.5), null );
+					}
+					bluepigEnemies.elementAt(i).updateCurrentFrame();
+				}
+				if (Math.abs(bluepigEnemies.elementAt(i).getInternalAngle() - halfPi) < 1.0) {
+					if (bluepigEnemies.elementAt(i).getCurrentFrame() < bluepigEnemies.elementAt(i).getMaxFrames() / 2 ) {
+						g2D.drawImage(rotateImageObject(bluepigEnemies.elementAt(i)).filter(bluepigEnemy.elementAt(2), null), (int)(bluepigEnemies.elementAt(i).getX() + 0.5), (int)(bluepigEnemies.elementAt(i).getY() + 0.5 ), null );
+					}
+					else {
+						g2D.drawImage(rotateImageObject(bluepigEnemies.elementAt(i)).filter(bluepigEnemy.elementAt(3), null), (int)(bluepigEnemies.elementAt(i).getX() + 0.5) , (int)(bluepigEnemies.elementAt(i).getY() + 0.5), null );
+					}
+					bluepigEnemies.elementAt(i).updateCurrentFrame();
+				}
+			}
+			if (Math.abs(bluepigEnemies.elementAt(i).getInternalAngle() - threehalvesPi) < 1.0) {
+				if (bluepigEnemies.elementAt(i).getCurrentFrame() < bluepigEnemies.elementAt(i).getMaxFrames() / 2 ) {
+					g2D.drawImage(rotateImageObject(bluepigEnemies.elementAt(i)).filter(bluepigEnemy.elementAt(0), null), (int)(bluepigEnemies.elementAt(i).getX() + 0.5), (int)(bluepigEnemies.elementAt(i).getY() + 0.5 ), null );
+				}
+				else {
+					g2D.drawImage(rotateImageObject(bluepigEnemies.elementAt(i)).filter(bluepigEnemy.elementAt(1), null), (int)(bluepigEnemies.elementAt(i).getX() + 0.5) , (int)(bluepigEnemies.elementAt(i).getY() + 0.5), null );
+				}
+				bluepigEnemies.elementAt(i).updateCurrentFrame();
+			}
+		}
+	}
+
+	private static class KeyPressed extends AbstractAction {
+
+		public KeyPressed() {
+			action = "";
+		}
+
+		public KeyPressed(String input) {
+			action = input;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			if (action.equals("UP")) {
+				upPressed = true;
+				lastPressed = 90.0;
+			}
+			if (action.equals("DOWN")) {
+				downPressed = true;
+				lastPressed = 270.0;
+			}
+			if (action.equals("LEFT")) {
+				leftPressed = true;
+				lastPressed = 180.0;
+			}
+			if (action.equals("RIGHT")) {
+				rightPressed = true;
+				lastPressed = 0.0;
+			}
+			if (action.equals("A")) {
+				aPressed = true;
+			}
+			if (action.equals("X")) {
+				xPressed = true;
+			}
+		}
+		private final String action;
+	}
+
+
+	private static class KeyReleased extends AbstractAction {
+
+
+		public KeyReleased() {
+			action = "";
+		}
+
+		public KeyReleased(String input) {
+			action = input;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+
+			if (action.equals("UP")) {
+				upPressed = false;
+			}
+			if (action.equals("DOWN")) {
+				downPressed = false;
+			}
+			if (action.equals("LEFT")) {
+				leftPressed = false;
+			}
+			if (action.equals("RIGHT")) {
+				rightPressed = false;
+			}
+			if (action.equals("A")) {
+
+			}
+			if (action.equals("X")) {
+				xPressed = false;
+			}
+		}
+		private final String action;
+	}
+
+	private static class QuitGame implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			endgame = true;
+		}
+	}
+
+	private static class StartGame implements ActionListener {
+		public StartGame() {
+        }
+
+        public void actionPerformed(ActionEvent e) {
+			endgame = true ;
+			upPressed = false;
+			downPressed = false;
+			leftPressed = false;
+			rightPressed = false;
+			aPressed = false;
+			xPressed = false;
+			lastPressed = 90.0 ;
+			backgroundState = "KI0809";
+			availableToDropLife = true ;
+			try {
+				clearEnemies();
+				generateEnemies(backgroundState);
+			}
+			catch(java.lang.NullPointerException jjlnpe) {
+
+			}
+			p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 0.0);
+			p1velocity = 0.0;
+			p1.setInternalAngle(threehalvesPi); // 270 degrees, in radians
+			p1.setMaxFrames(2);
+			p1.setlastposx(p1originalX);
+			p1.setlastposy(p1originalY);
+			p1.setLife(6);
+			p1.setMaxLife(6);
+			doorKItoTC = new ImageObject(200, 55, 35, 35, 0.0);
+			doorTCtoKI = new ImageObject(150, 270, 35, 35, 0.0);
+			try {
+				Thread.sleep(50);
+			}
+			catch (InterruptedException ie) {
+
+			}
+			lastAudioStart = System.currentTimeMillis();
+			playAudio(backgroundState);
+			endgame = false;
+			lastDropLife = System.currentTimeMillis();
+			Thread t1 = new Thread (new Animate());
+			Thread t2 = new Thread (new PlayerMover());
+			Thread t3 = new Thread (new CollisionChecker());
+			Thread t4 = new Thread (new AudioLooper());
+			Thread t5 = new Thread (new EnemyMover());
+			Thread t6 = new Thread (new HealthTracker());
+			t1.start();
+			t2.start();
+			t3.start();
+			t4.start();
+			t5.start();
+			t6.start();
+
+		}
+	}
+
+	private static class GameLevel implements ActionListener {
+		public int decodeLevel(String input) {
+			int ret = 3;
+			if (input.equals("One")) {
+				ret = 1;
+			}
+			else if (input.equals("Two")) {
+				ret = 2;
+			}
+			else if (input.equals("Three")) {
+				ret = 3;
+			}
+			else if (input.equals("Four")) {
+				ret = 4;
+			}
+			else if (input.equals("Five")) {
+				ret = 5;
+			}
+			else if (input.equals("Six")) {
+				ret = 6;
+			}
+			else if (input.equals("Seven")) {
+				ret = 7;
+			}
+			else if (input.equals("Eight")) {
+				ret = 8;
+			}
+			else if (input.equals("Nine")) {
+				ret = 9;
+			}
+			else if (input.equals("Ten")) {
+				ret = 10;
+			}
+			return ret;
+		}
+		
+	}
+    public void actionPerformed(ActionEvent e) {
+        JComboBox cb = (JComboBox)e.getSource();
+        String textLevel = (String)cb.getSelectedItem();
+        level = decodeLevel(textLevel);
+    }
+
+	private static Boolean isInside(double p1x, double p1y, double p2x1, double p2y1, double p2x2, double p2y2) {
+		Boolean ret = false;
+		if (p1x > p2x1 && p1x < p2x2) {
+			if (p1y > p2y1 && p1y < p2y2) {
+				ret = true;
+			}
+			if (p1y > p2y2 && p1y < p2y1) {
+				ret = true;
+			}
+		}
+		if (p1x > p2x2 && p1x < p2x1) {
+			if (p1y > p2y1 && p1y < p2y2) {
+				ret = true;
+			}
+			if (p1y > p2y2 && p1y < p2y1) {
+				ret = true;
+			}
+		}
+		return ret;
+	}
+
+	private static Boolean collisionOccursCoordinates(double p1x1, double p1y1, double p1x2, double p1y2, double p2x1,
+													  double p2y1, double p2x2, double p2y2) {
+		Boolean ret = false;
+		if (isInside(p1x1, p1y1, p2x1, p2y1, p2x2, p2y2)) {
+			ret = true;
+		}
+		if (isInside(p1x1, p1y2, p2x1, p2y1, p2x2, p2y2)) {
+			ret = true;
+		}
+		if (isInside(p1x2, p1y1, p2x1, p2y1, p2x2, p2y2)) {
+			ret = true;
+		}
+		if (isInside(p1x2, p1y2, p2x1, p2y1, p2x2, p2y2)) {
+			ret = true;
+		}
+		if (isInside(p2x1, p2y1, p1x1, p1y1, p1x2, p1y2)) {
+			ret = true;
+		}
+		if (isInside(p2x1, p2y2, p1x1, p1y1, p1x2, p1y2)) {
+			ret = true;
+		}
+		if (isInside(p2x2, p2y1, p1x1, p1y1, p1x2, p1y2)) {
+			ret = true;
+		}
+		if (isInside(p2x2, p2y2, p1x1, p1y1, p1x2, p1y2)) {
+			ret = true;
+		}
+		return ret;
+	}
+
+	private static Boolean collisionOccurs(ImageObject obj1, ImageObject obj2) {
+		Boolean ret = false;
+		if (collisionOccursCoordinates(obj1.getX(), obj1.getY(), obj1.getX() + obj1.getWidth(), obj1.getY() + obj1.getHeight(), obj2.getX(), obj2.getY(), obj2.getX() + obj2.getWidth(), obj2.getY() + obj2.getHeight()) == true) {
+			ret = true;
+		}
+		return ret;
+	}
+
+
+}
