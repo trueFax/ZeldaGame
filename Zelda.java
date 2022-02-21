@@ -403,7 +403,436 @@ public class Zelda {
         }
         return ret;
     }
+    // begining on True's code 
+    private static class PlayerMover implements Runnable
+    {
+        public PlayerMover()
+        {
+            velocitystep = 3;
+        }
+        public void run()
+        {
+            while(endgame == false)
+            {
+                try
+                {
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException e)
+                {
 
-// start on psc animate
+                }
+                if(upPressed || downPressed || leftPressed || rightPressed)
+                {
+                    p1velocity = velocitystep;
+                    if(upPressed)
+                    {
+                        if(leftPressed)
+                        {
+                            p1.setInternalAngle(fivequartersPi);
+                        }
+                        else if(rightPressed)
+                        {
+                            p1.setInternalAngle(5.49779);
+                        }
+                        else
+                        {
+                            p1.setInternalAngle(threehalvesPi);
+                        }
+                    }
+                    if(downPressed)
+                    {
+                        if(leftPressed)
+                        {
+                            p1.setInternalAngle(2.35619);
+                        }
+                        else if (rightPressed)
+                        {
+                            p1.setInternalAngle(quarterPi);
+                        }
+                        else
+                        {
+                            p1.setInternalAngle(halfPi);
+                        }
+                    }
+                    if(leftPressed)
+                    {
+                        if(upPressed)
+                        {
+                            p1.setInternalAngle(fivequartersPi);
+                        }
+                        else if(downPressed)
+                        {
+                            p1.setInternalAngle(threequartersPi);
+                        }
+                        else
+                        {
+                            p1.setInternalAngle(pi);
+                        }
+                    }
+                    if(rightPressed)
+                    {
+                        if(upPressed)
+                        {
+                            p1.setInternalAngle(5.49779);
+                        }
+                        else if (downPressed)
+                        {
+                            p1.setInternalAngle(quarterPi);
+                        }
+                        else
+                        {
+                            p1.setInternalAngle(0.0);
+                        }
+                    }
+                }
+                else 
+                {
+                    p1velocity = 0.0;
+                    p1.setInternalAngle(threehalvesPi);
+                }
+                p1.updateBounce();
+                p1.move(p1velocity * Math.cos(p1.getInternalAngle()), p1velocity * Math.sin(p1.getInternalAngle()));
+                int wrap = p1.screenWrap(XOFFSET, XOFFSET + WINWIDTH, YOFFSET, YOFFSET + WINHEIGHT);
+                backgroundState = bgWrap(backgroundState, wrap);
+                if(wrap != 0)
+                {
+                    clearEnemies();
+                    generateEnemies(backgroundState);
+                }
+            }
+        }
+        private double velocitystep;
+    }
 
-} 
+    private static void clearEnemies()
+    {
+        bluepigEnemies.clear();
+        bubblebossEnemies.clear();
+    }
+    private static void generateEnemies(String backgroundState)
+    {
+        if(backgroundState.substring(0, 6).equals("KI0809"))
+        {
+            bluepigEnemies.addElement(new ImageObject(20, 90, 33, 33, 0.0));
+            bluepigEnemies.addElement(new ImageObject(250, 230, 33, 33, 0.0));
+        }
+        for (int i = 0; i < bluepigEnemies.size(); i++)
+        {
+            bluepigEnemies.elementAt(i).setMaxFrames(25);
+        }
+    }
+    private static class EnemyMover implements Runnable
+    {
+        public EnemyMover()
+        {
+            bluepigvelocitystep = 2;
+        }
+        public void run()
+        {
+            Random randomNumbers = new Random(LocalTime.now().getNano());
+            while (endgame == false)
+            {
+                try
+                {
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException e)
+                {
+                    // NOP
+                }
+
+                // TODO
+                try
+                {
+                    for (int i = 0; i < bluepigEnemies.size(); i++)
+                    {
+                        int state = randomNumbers.nextInt(1000);
+                        if(state < 5)
+                        {
+                            bluepigvelocity = bluepigvelocitystep;
+                            bluepigEnemies.elementAt(i).setInternalAngle(0);
+                        }
+                        else if (state < 10)
+                        {
+                            bluepigvelocity = bluepigvelocitystep;
+                            bluepigEnemies.elementAt(i).setInternalAngle(halfPi);
+                        }
+                        else if(state < 15)
+                        {
+                            bluepigvelocity = bluepigvelocitystep;
+                            bluepigEnemies.elementAt(i).setInternalAngle(pi);
+                        }
+                        else if (state < 20)
+                        {
+                            bluepigvelocity = bluepigvelocitystep;
+                            bluepigEnemies.elementAt(i).setInternalAngle(threehalvesPi);
+                        }
+                        else
+                        {
+                            bluepigvelocity = 0;
+                        }
+                        bluepigEnemies.elementAt(i).updateBounce();
+                        bluepigEnemies.elementAt(i).move(bluepigvelocity * Math.cos(bluepigEnemies.elementAt(i).getInternalAngle()), bluepigvelocity * Math.sin(bluepigEnemies.elementAt(i).getInternalAngle()));
+                    }
+                    for (int i = 0; i < bubblebossEnemies.size(); i++)
+                    {
+
+                    }
+                }
+                catch (java.lang.NullPointerException jlnpe)
+                {
+                    // NOP
+                }
+            }
+        }
+        private double bluepigvelocitystep;
+        private double bluepigvelocity;
+    }
+
+    private static class HealthTracker implements Runnable
+    {
+        public void run()
+        {
+            while (endgame == false)
+            {
+                Long curTime = new Long(System.currentTimeMillis());
+                if(availableToDropLife && p1.getDropLife() > 0)
+                {
+                    int newLife = p1.getLife() - p1.getDropLife();
+                    p1.setDropLife(0);
+                    availableToDropLife = false;
+
+                    lastDropLife = System.currentTimeMillis();
+                    p1.setLife(newLife);
+                    try
+                    {
+                        AudioInputStream ais = AudioSystem.getAudioInputStream(new File("hurt.wav").getAbsoluteFile());
+                        Clip hurtclip = AudioSystem.getClip();
+                        hurtclip.open(ais);
+                        hurtclip.start();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
+                else
+                {
+                    if (curTIme - lastDropLife > dropLifeLifetime)
+                    {
+                        availableToDropLife = true;
+                    }
+                }
+            }
+        }
+    }
+
+    private static class CollisionChecker implements Runnable
+    {
+        public void run()
+        {
+            // Random randomNumbers = new Random(LocalTime.now().getNano())
+            while(endgame == false)
+            {
+                // check player against doors in given scenes
+                if(backgroundState.substring(0, 6).equals("KI0511"))
+                {
+                    if(collisionOccurs(p1, doorKItoTC))
+                    {
+                        p1.moveto(p1originalX, p1originalY);
+                        backgroundState = "TC0305";
+                        clip.stop();
+                        playAudio(backgroundState);
+                    }
+                }
+                else if(backgroundState.substring(0, 6).equals("TC0305"))
+                {
+                    if(collisionOccurs(p1, doorTCtoKI))
+                    {
+                        p1.moveto(p1originalX, p1originalY);
+                        backgroundState = "KI0511";
+                        clip.stop();
+                        playAudio(backgroundState);
+                    }
+                }
+
+                // check player and enemies against walls
+                if (backgroundState.substring(0, 6).equals("KI0510"))
+                {
+                    checkMoversAgainstWalls(wallsKI.elementAt(5).elementAt(10));
+                }
+                if(backgroundState.substring(0, 6).equals("KI0809"))
+                {
+                    checkMoversAgainstWalls(wallsKI.elementAt(8).element(9));
+                }
+
+                // check player against enemies
+                for (int i = 0; i < bluepigEnemies.size(); i++)
+                {
+                    if (collisionOccurs(p1, bluepigEnemies.elementAt(i)))
+                    {
+                        // System.out.println("Still Colliding: " + I " , " + System.currentTimeMillis());
+                        p1.setBounce(true);
+                        bluepigEnemies.elementAt(i).setBounce(true);
+                        if(availableToDropLife)
+                        {
+                            p1.setDropLife(1);
+                        }
+                    }
+                }
+                // TODO: check enemies against walls
+
+                // TODO: check player against deep water or pits
+
+                // TODO: check player against enemy arrows
+
+                // TODO: check enemies against player weapons
+            }
+        }
+        private static void checkMoversAgainstWalls(Vector< ImageObject > wallsInput)
+        {
+            for (int i = 0; i < wallsInput.size(); i++)
+            {
+                if(collisionOccurs(p1, wallsInput.elementAt(i)))
+                {
+                    p1.setBounce(true);
+                }
+                for (int j = 0; j < bluepigEnemies.size(); j++)
+                {
+                    if (collisionOccurs(bluepigEnemies.elementAt(j), wallsInput.elementAt(i)))
+                    {
+                        bluepigEnemies.elementAt(j).setBounce(true);
+                    }
+                }
+            }
+        }
+    }
+
+    // TODO: make one lockrotate function which takes as input objInner, objOuter, and point relative to objInner's x,y that objOuter must rotate around
+    // dist is a distance between the two objects at the bottom of objInner.
+    private static void lockrotateObjAroundObjbottom(ImageObject objOuter, ImageObject objInner, double dist)
+    {
+        objOuter.moveto(objInner.getX() + (dist + objInner.getWidth() / 2.0) * Math.cos(-objInner.getAngle() + pi/2.0) + objOuter.getWidth() / 2.0, objInner.getY() + (dist + objInner.getHeight() / 2.0) * Math.sin(-objInner.getAngle() + pi/2.0) + objOuter.getHeight() / 2.0);
+        objouter.setAngle(objInner.getAngle());
+    }
+
+    // dist is a distance between the two objects at the top of the inner object
+    private static void lockrotateObjAroundObjtop(ImageObject objOuter, ImageObject objInner, double dist)
+    {
+        objOuter.moveto(objInner.getX() + objOuter.getWidth() + (objInner.getWidth() / 2.0 + (dist + objInner.getWdith() / 2.0) * Math.cos(objInner.getAngle() + pi / 2.0)) / 2.0, objInner.getY() - objOuter.getHeight() + (dist + objInner.getHeight() / 2.0) * Math.sin(onobjInner.getAngle() / 2.0));
+        objOuter.setAngle(objInner.getAngle());
+    }
+
+    private static AffineTransformOp rotateImageObject(ImageObject obj)
+    {
+        AffineTransform at = AffineTransform.getRotateInstance(-obj.getAngle(), obj.getWidth() / 2.0, obj.getHeight() / 2.0);
+        AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        return atop;
+    }
+
+    private static AffineTransformOp spinImageObject(ImageObject obj)
+    {
+        AffineTransform at = AffineTransform.getRotateInstance(-obj.getInternalAngle(), obj.getWidth() / 2.0, obj.getHeight() / 2.0);
+        AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        return atop;
+    }
+
+    private static void backgroundDraw()
+    {
+        Graphics g = appFrame.getGraphics();
+        Graphics2D g2D = (Graphics2D) g;
+
+        if(backgroundState.substring(0, 2).equals("KI"))
+        {
+            int i = Integer.parseInt(backgroundState.substring(4, 6));
+            int j = Integer.parseInt(backgroundState.substring(2, 4));
+            if(i < backgroundTC.size())
+            {
+                if (j < backgroundTC.elementAt(i).size())
+                {
+                    g2D.drawImage(backgroundTC.elementAt(i).elementAt(j), XOFFSET, YOFFSET, null);
+                }
+            }
+        }
+    }
+
+    private static void playerDraw()
+    {
+        Graphics g = appFrame.getGraphics();
+        Graphics2D g2D = (Graphics2D) g;
+
+        if(upPressed || downPressed || leftPressed || rightPressed)
+        {
+            if(upPressed == true)
+            {
+                if(p1.getCurrentFrame() == 0)
+                {
+                    g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(4), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+                }
+                else if(p1.getCurrentFrame() == 1)
+                {
+                    g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(5), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+                }
+                p1.updateCurrentFrame();
+            }
+
+            if(downPressed == true)
+            {
+                if(p1.getCurrentFrame() == 0)
+                {
+                    g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(2), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+                }
+                else if(p1.getCurrentFrame() == 1)
+                {
+                    g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(3), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+                }
+                p1.updateCurrentFrame();
+            }
+            if(leftPressed == true)
+            {
+                if(p1.getCurrentFrame() == 0)
+                {
+                    g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(0), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+                }
+                else if(p1.getCurrentFrame() == 1)
+                {
+                    g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(1), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+                }
+                p1.updateCurrentFrame();
+            }
+            if(rightPressed == true)
+            {
+                if(p1.getCurrentFrame() == 0)
+                {
+                    g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(6), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+                }
+                else if (p1.getCurrentFrame() == 1)
+                {
+                    g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(7), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+                }
+                p1.updateCurrentFrame();
+            }
+        }
+        else
+        {
+            if(Math.abs(lastPressed - 90.0) < 1.0)
+            {
+                g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(4), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+            }
+            if(Math.abs(lastPressed - 270.0) < 1.0)
+            {
+                g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(2), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+            }
+            if(Math.abs(lastPressed - 0.0) < 1.0)
+            {
+                g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(6), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+            }
+            if(Math.abs(lastPressed - 180.0) < 1.0)
+            {
+                g2D.drawImage(rotateImageObject(p1).filter(link.elementAt(0), null), (int)(p1.getX() + 0.5), (int)(p1.getY() + 0.5), null);
+            }
+        }
+    }
+    // Matt's code
+}
